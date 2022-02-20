@@ -1,11 +1,12 @@
+import { Container } from '@material-ui/core';
 import React from 'react';
 import { Header } from './components';
 
 function App() {
   return (
     <div className='App'>
-      Hello
       <Header />
+      <Container maxWidth='md'></Container>
     </div>
   );
 }
