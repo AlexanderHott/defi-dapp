@@ -18,35 +18,16 @@ contract TokenFarm is Ownable {
         dappToken = IERC20(_dappTokenAddress);
     }
 
-    /// @dev Set a price feed address for a token.
-    /// @param _token The address of the token.
-    /// @param _priceFeed The address of the price feed.
-    function setPriceFeedContract(address _token, address _priceFeed)
-        public
-        onlyOwner
-    {
-        tokenToPriceFeed[_token] = _priceFeed;
-    }
-
-    /// @dev Give out DAPP tokens based on the amount of staked tokens to all users.
-    function issueTokens() public onlyOwner {
-        for (uint256 i = 0; i < stakers.length; i++) {
-            address staker = stakers[i];
-            uint256 staked = getUserTotalValue(staker);
-            dappToken.transfer(staker, staked);
-        }
-    }
-
     /// @dev Add tokens to stake in this contract.
     /// @param _amount Amount of tokens to stake.
     /// @param _token Address of the token to stake.
     function stakeTokens(uint256 _amount, address _token) public payable {
-        require(_amount > 0, "Amount must be more than 0.");
-        require(tokenIsAllowed(_token), "Token is not allowed.");
-        require(
-            msg.value == _amount,
-            "Amount must match the value of the transaction."
-        );
+        // require(_amount > 0, "Amount must be more than 0.");
+        // require(tokenIsAllowed(_token), "Token is not allowed.");
+        // require(
+        //     msg.value == _amount,
+        //     "Amount must match the value of the transaction."
+        // );
 
         // Transfer funds
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
@@ -89,9 +70,10 @@ contract TokenFarm is Ownable {
     /// @return The total in USD of tokens staked by a user.
     function getUserTotalValue(address _user) public view returns (uint256) {
         require(uniqueTokensStaked[_user] > 0, "User has no staked tokens.");
+        
         uint256 totalValue = 0;
         for (uint256 i = 0; i < allowedTokens.length; i++) {
-            totalValue = totalValue + stakingBalance[allowedTokens[i]][_user];
+            totalValue += getUserSingleTokenValue(_user, allowedTokens[i]);
         }
         return totalValue;
     }
@@ -138,14 +120,30 @@ contract TokenFarm is Ownable {
         allowedTokens.push(_token);
     }
 
+    /// @dev Give out DAPP tokens based on the amount of staked tokens to all users.
+    function issueTokens() public onlyOwner {
+        for (uint256 i = 0; i < stakers.length; i++) {
+            address staker = stakers[i];
+            dappToken.transfer(staker, getUserTotalValue(staker));
+        }
+    }
+
+    /// @dev Set a price feed address for a token.
+    /// @param _token The address of the token.
+    /// @param _priceFeed The address of the price feed.
+    function setPriceFeedContract(address _token, address _priceFeed)
+        public
+        onlyOwner
+    {
+        tokenToPriceFeed[_token] = _priceFeed;
+    }
+
     /// @dev Add a user to the uniqueTokensStaked mapping if they are new.
     /// @param _user Address of the staker.
     /// @param _token Address of the token.
     function updateUniqueTokensStaked(address _user, address _token) internal {
-        if (stakingBalance[_token][_user] <= 0) {
+        if (stakingBalance[_token][_user] >= 0) {
             uniqueTokensStaked[_user] = uniqueTokensStaked[_user] + 1;
         }
     }
-
-    // get eth value
 }
