@@ -39,7 +39,7 @@ def deploy_token_farm_and_dapp_token():
 
 def add_allowed_tokens(token_farm, allowed_tokens_map, account):
     for token, address in allowed_tokens_map.items():
-        tx = token_farm.addToken(token.address, {"from": account})
+        tx = token_farm.addAllowedToken(token.address, {"from": account})
         tx.wait(1)
         tx = token_farm.setPriceFeedContract(token.address, address, {"from": account})
         tx.wait(1)

@@ -70,7 +70,7 @@ contract TokenFarm is Ownable {
     /// @return The total in USD of tokens staked by a user.
     function getUserTotalValue(address _user) public view returns (uint256) {
         require(uniqueTokensStaked[_user] > 0, "User has no staked tokens.");
-        
+
         uint256 totalValue = 0;
         for (uint256 i = 0; i < allowedTokens.length; i++) {
             totalValue += getUserSingleTokenValue(_user, allowedTokens[i]);
@@ -114,7 +114,7 @@ contract TokenFarm is Ownable {
 
     /// @dev Add a token to the list of allowed tokens.
     /// @param _token The token to add.
-    function addToken(address _token) public onlyOwner {
+    function addAllowedToken(address _token) public onlyOwner {
         require(_token != address(0));
         require(tokenIsAllowed(_token) == false);
         allowedTokens.push(_token);
