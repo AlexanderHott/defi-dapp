@@ -7,9 +7,7 @@ import { ChainId, DAppProvider } from '@usedapp/core';
 
 ReactDOM.render(
   <React.StrictMode>
-    <DAppProvider
-      config={{ supportedChains: [ChainId.Kovan, ChainId.Rinkeby] }}
-    >
+    <DAppProvider config={{ supportedChains: [ChainId.Kovan] }}>
       <App />
     </DAppProvider>
   </React.StrictMode>,
