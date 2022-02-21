@@ -1,7 +1,7 @@
 import { Box, Tab } from '@material-ui/core';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import React, { useState } from 'react';
-import { WalletBalance } from '..';
+import { StakeForm, WalletBalance } from '..';
 import { Token } from '../Main';
 
 type WalletProps = {
@@ -30,6 +30,7 @@ const Wallet = ({ supportedTokens }: WalletProps) => {
               <TabPanel value={idx.toString()}>
                 <div>
                   <WalletBalance token={tkn} />
+                  <StakeForm token={tkn} />
                 </div>
               </TabPanel>
             );
