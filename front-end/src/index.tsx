@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ChainId, DAppProvider } from '@usedapp/core';
+import { DAppProvider, Kovan } from '@usedapp/core';
 
 ReactDOM.render(
   <React.StrictMode>
     <DAppProvider
       config={{
-        supportedChains: [ChainId.Kovan],
+        networks: [Kovan],
         notifications: {
           expirationPeriod: 1000,
           checkInterval: 1000,
