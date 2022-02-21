@@ -1,8 +1,11 @@
-import { useEthers, useTokenBalance } from '@usedapp/core';
-import React, { useState } from 'react';
+import { useEthers, useTokenBalance, useNotifications } from '@usedapp/core';
+import React, { useEffect, useState } from 'react';
 import { Token } from '../Main';
 import { formatUnits } from '@ethersproject/units';
-import { Button, Input } from '@material-ui/core';
+import { Button, CircularProgress, Input } from '@material-ui/core';
+import { useStakeTokens } from '../../hooks';
+import { utils } from 'ethers';
+import { TransactionNames } from '../../utils';
 
 type StakeFormProps = {
   token: Token;
@@ -10,6 +13,7 @@ type StakeFormProps = {
 
 const StakeForm = ({ token }: StakeFormProps) => {
   const [amount, setAmount] = useState<number>(0);
+  const { notifications } = useNotifications();
 
   const { address, name } = token;
   const { account } = useEthers();
@@ -18,7 +22,39 @@ const StakeForm = ({ token }: StakeFormProps) => {
     ? parseFloat(formatUnits(tokenBalance.toString()))
     : 0;
 
-  console.log(amount);
+  const { approveAndStake, state: approveAndStakeErc20State } =
+    useStakeTokens(address);
+
+  const handleStakeSubmit = () => {
+    const amountAsWei = utils.parseEther(amount.toString());
+    return approveAndStake(amountAsWei.toString());
+  };
+
+  const isMining = approveAndStakeErc20State.status === 'Mining';
+
+  useEffect(() => {
+    // check if any succeed notifications with name "Approve ERC20 transfer" exist
+    if (
+      notifications.filter(
+        (notif) =>
+          notif.type === 'transactionSucceed' &&
+          notif.transactionName === TransactionNames.APPROVE_ERC20_TRANSFER
+      ).length > 0
+    ) {
+      console.log('approved');
+    }
+
+    if (
+      notifications.filter(
+        (notif) =>
+          notif.type === 'transactionSucceed' &&
+          notif.transactionName === TransactionNames.STAKE_TOKENS
+      ).length > 0
+    ) {
+      console.log('staked');
+    }
+  }, [notifications]);
+
   return (
     <>
       <Input
@@ -26,7 +62,14 @@ const StakeForm = ({ token }: StakeFormProps) => {
           e.target.value === '' ? null : setAmount(parseFloat(e.target.value))
         }
       />
-      <Button color='primary'>Stake!</Button>
+      <Button
+        onClick={handleStakeSubmit}
+        color='primary'
+        size='large'
+        disabled={isMining}
+      >
+        {isMining ? <CircularProgress size={26} /> : 'Stake!'}
+      </Button>
     </>
   );
 };

@@ -7,7 +7,15 @@ import { ChainId, DAppProvider } from '@usedapp/core';
 
 ReactDOM.render(
   <React.StrictMode>
-    <DAppProvider config={{ supportedChains: [ChainId.Kovan] }}>
+    <DAppProvider
+      config={{
+        supportedChains: [ChainId.Kovan],
+        notifications: {
+          expirationPeriod: 1000,
+          checkInterval: 1000,
+        },
+      }}
+    >
       <App />
     </DAppProvider>
   </React.StrictMode>,

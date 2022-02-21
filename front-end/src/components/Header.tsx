@@ -21,7 +21,7 @@ const Header = () => {
     <div className={classes.container}>
       <div>
         {isConnected ? (
-          <Button color='primary' onClick={deactivate} variant='contained'>
+          <Button color='default' onClick={deactivate} variant='contained'>
             Disconnect
           </Button>
         ) : (

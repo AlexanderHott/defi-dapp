@@ -12,7 +12,7 @@ const Wallet = ({ supportedTokens }: WalletProps) => {
   const [tknIdx, setTknIdx] = useState<number>(0);
   return (
     <Box>
-      <div>Your Wallet!</div>
+      <h1>Your Wallet!</h1>
       <Box>
         <TabContext value={tknIdx.toString()}>
           <TabList
@@ -27,7 +27,7 @@ const Wallet = ({ supportedTokens }: WalletProps) => {
           </TabList>
           {supportedTokens.map((tkn, idx) => {
             return (
-              <TabPanel value={idx.toString()}>
+              <TabPanel value={idx.toString()} key={idx}>
                 <div>
                   <WalletBalance token={tkn} />
                   <StakeForm token={tkn} />
